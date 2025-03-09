@@ -7,7 +7,7 @@
     <data>
         <variable
             name="contact"
-            type="com.mastercoding.contactsmanagerapp.Contacts" />
+            type="com.example.contactmanager.Contacts" />
 
     </data>
 

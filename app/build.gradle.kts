@@ -4,12 +4,12 @@ plugins {
 
 android {
     namespace = "com.example.contactmanager"
-    compileSdk = 33
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.example.contactmanager"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
@@ -31,6 +31,7 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        dataBinding = true
     }
 }
 
@@ -41,6 +42,7 @@ dependencies {
     implementation("androidx.constraintlayout:constraintlayout:2.2.0")
     implementation("androidx.navigation:navigation-fragment:2.8.7")
     implementation("androidx.navigation:navigation-ui:2.8.7")
+    implementation("androidx.databinding:databinding-runtime:8.9.0")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
@@ -49,4 +51,5 @@ dependencies {
     implementation("androidx.room:room-runtime:$room_version")
     // To use Kotlin annotation processing
      annotationProcessor("androidx.room:room-compiler:$room_version")
+
 }

@@ -10,11 +10,11 @@
     <data>
         <variable
             name="contact"
-            type="com.mastercoding.contactsmanagerapp.Contacts" />
+            type="com.example.contactmanager.Contacts" />
         
         <variable
             name="clickHandler"
-            type="com.mastercoding.contactsmanagerapp.AddNewContactClickHandler" />
+            type="com.example.contactmanager.AddNewContactClickHandler" />
     </data>
 
 
@@ -26,15 +26,16 @@
 
 
         <EditText
-            android:text="@={contact.name}"
-            android:textColorHint="@color/white"
-            android:textColor="@color/white"
             android:id="@+id/editText"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="3dp"
             android:layout_marginBottom="28dp"
             android:hint="Enter Name"
+            android:minHeight="48dp"
+            android:text="@={contact.name}"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             app:layout_constraintBottom_toTopOf="@+id/emailEDT"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -43,13 +44,14 @@
             app:layout_constraintVertical_chainStyle="packed" />
 
         <EditText
-            android:text="@={contact.email}"
-            android:textColorHint="@color/white"
-            android:textColor="@color/white"
             android:id="@+id/emailEDT"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:hint="Enter Email"
+            android:minHeight="48dp"
+            android:text="@={contact.email}"
+            android:textColor="@color/white"
+            android:textColorHint="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

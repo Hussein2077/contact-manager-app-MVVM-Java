@@ -1,78 +1,95 @@
 package com.example.contactmanager;
-
+import android.annotation.SuppressLint;
 import android.os.Bundle;
-
-import com.google.android.material.snackbar.Snackbar;
-
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.annotation.NonNull;
+import androidx.databinding.DataBindingUtil;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.recyclerview.widget.ItemTouchHelper;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.View;
+import java.util.ArrayList;
+import java.util.List;
 
-import androidx.core.view.WindowCompat;
-import androidx.navigation.NavController;
-import androidx.navigation.Navigation;
-import androidx.navigation.ui.AppBarConfiguration;
-import androidx.navigation.ui.NavigationUI;
-
-import com.example.contactmanager.databinding.ActivityMainBinding;
-
-import android.view.Menu;
-import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
+    private final ArrayList<Contacts> contactsArrayList = new ArrayList<>();
 
-    private AppBarConfiguration appBarConfiguration;
-    private ActivityMainBinding binding;
+    private MyAdapter myAdapter;
+
+    MyViewModel viewModel;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
-        setContentView(binding.getRoot());
+        // Data Binding
+        // Binding
+        com.example.contactmanager.databinding.ActivityMainBinding mainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        MainActivityClickHandlers handlers = new MainActivityClickHandlers(this);
 
-        setSupportActionBar(binding.toolbar);
+        mainBinding.setClickHandler(handlers);
 
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        appBarConfiguration = new AppBarConfiguration.Builder(navController.getGraph()).build();
-        NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration);
+        // RecyclerView
+        RecyclerView recyclerView = mainBinding.recyclerview;
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setHasFixedSize(true);
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
+
+        // Database:
+        // Data Source
+        ContactDatabase contactDatabase = ContactDatabase.getInstance(this);
+
+        // View Model:
+        viewModel = new ViewModelProvider(this)
+                .get(MyViewModel.class);
+
+
+        // Loading the Data from ROOM DB
+        viewModel.getAllContacts().observe(this,
+                new Observer<List<Contacts>>() {
+                    @SuppressLint("NotifyDataSetChanged")
+                    @Override
+                    public void onChanged(List<Contacts> contacts) {
+
+                        contactsArrayList.clear();
+
+                        contactsArrayList.addAll(contacts);
+
+                        myAdapter.notifyDataSetChanged();
+
+                    }
+                });
+
+
+        // Adapter
+        myAdapter = new MyAdapter(contactsArrayList);
+
+        // Linking the RecyclerView with the Adapter
+        recyclerView.setAdapter(myAdapter);
+
+        // swipe to delete
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT) {
             @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAnchorView(R.id.fab)
-                        .setAction("Action", null).show();
+            public boolean onMove(@NonNull RecyclerView recyclerView, @NonNull RecyclerView.ViewHolder viewHolder, @NonNull RecyclerView.ViewHolder target) {
+                return false;
             }
-        });
+
+            @Override
+            public void onSwiped(@NonNull RecyclerView.ViewHolder viewHolder, int direction) {
+                // If you swipe the item to the left
+                Contacts c = contactsArrayList.get(viewHolder.getAdapterPosition());
+
+                viewModel.deleteContact(c);
+            }
+        }).attachToRecyclerView(recyclerView);
+
+
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public boolean onSupportNavigateUp() {
-        NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_content_main);
-        return NavigationUI.navigateUp(navController, appBarConfiguration)
-                || super.onSupportNavigateUp();
-    }
 }
